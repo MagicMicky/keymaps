@@ -1,4 +1,4 @@
-all: tada68
+all: clean tada68
 
 clean:
 	rm output/*
