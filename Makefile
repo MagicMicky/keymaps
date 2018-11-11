@@ -1,3 +1,8 @@
+all: tada68
+
+clean:
+	rm output/*
+
 build-latest:
 	docker build -t qmk:latest .
 
