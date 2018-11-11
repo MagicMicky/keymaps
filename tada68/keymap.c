@@ -11,15 +11,15 @@
 #define KC_LOCK LCTL(LSFT(KC_POWER))
 
 //automator to Hide Slack
-#define KC_HSLK LCTL(LSFT(LGUI(KC_M)))
+#define KC_HSLK LGUI(KC_F17)
 //automator to Open/Activate iterm
-#define KC_OTRM LCTL(LSFT(LGUI(KC_SLSH)))
+#define KC_OTRM LGUI(KC_F13)
 //automator to Open/Activate Chrome
-#define KC_OCRM LCTL(LSFT(LGUI(KC_COMM)))
+#define KC_OCRM LGUI(KC_F14)
 //automator to Open/Activate Code
-#define KC_OCDE LCTL(LSFT(LGUI(KC_DOT)))
+#define KC_OCDE LGUI(KC_F15)
 //automator to Open/Activate Slack
-#define KC_OSLK LCTL(LSFT(LGUI(KC_SCLN)))
+#define KC_OSLK LGUI(KC_F16)
 
 #define _______ KC_TRNS
 
