@@ -4,4 +4,5 @@ name: keymaps
 steps:
     - name: build
       image: plugins/docker
-      repo: magicmicky/qmk
+      settings:
+          repo: magicmicky/qmk
