@@ -30,4 +30,4 @@ WORKDIR /qmk
 COPY --from=git /qmk /qmk
 RUN git submodule init && git submodule update --init --recursive
 
-CMD make clean ; make ${keyboard}:${keymap}:${output} && mv /qmk/${keyboard}_${keymap}.* /output
+CMD make clean ; make ${keyboard}:${keymap}:${output} && mv /qmk/.build/${keyboard}_${keymap}.* /output

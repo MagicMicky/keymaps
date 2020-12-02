@@ -9,6 +9,8 @@ build-latest:
 tada68: clean build-latest
 	docker run  -v $(CURDIR)/output:/output -v $(CURDIR)/tada68:/qmk/keyboards/tada68/keymaps/magicmicky:ro -e keyboard=tada68 -e keymap=magicmicky -e output=bin -ti qmk 
 
+uno: clean build-latest
+	docker run  -v $(CURDIR)/output:/output -v $(CURDIR)/uno:/qmk/keyboards/uno/keymaps/magicmicky:ro -e keyboard=uno -e keymap=magicmicky -e output=hex -ti qmk 
 
 
 clean-flash:
