@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y build-essential
 
 ENV keyboard=tada68
 ENV keymap=default
-ENV output=bin
+ENV output=hex
 
 VOLUME /output
 
@@ -30,4 +30,4 @@ WORKDIR /qmk
 COPY --from=git /qmk /qmk
 RUN git submodule init && git submodule update --init --recursive
 
-CMD make clean ; make ${keyboard}:${keymap}:${output} && mv /qmk/.build/${keyboard}_${keymap}.* /output
+CMD make clean ; make ${keyboard}:${keymap} && mv /qmk/.build/* /output

@@ -1,7 +1,7 @@
 all: clean tada68
 
 clean:
-	rm -f output/*
+	rm -rf output/*
 
 build-latest:
 	docker build -t qmk:latest .
@@ -11,6 +11,10 @@ tada68: clean build-latest
 
 uno: clean build-latest
 	docker run  -v $(CURDIR)/output:/output -v $(CURDIR)/uno:/qmk/keyboards/uno/keymaps/magicmicky:ro -e keyboard=uno -e keymap=magicmicky -e output=hex -ti qmk 
+
+space65: clean build-latest
+	docker run  -v $(CURDIR)/output:/output -v $(CURDIR)/space65:/qmk/keyboards/gray_studio/space65/keymaps/magicmicky:ro -e keyboard=gray_studio/space65 -e keymap=magicmicky -e output=hex -ti qmk 
+
 
 
 clean-flash:
