@@ -45,6 +45,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 // Store detected OS globally
 static os_variant_t current_os = OS_UNSURE;
+static uint8_t saved_hue = 0;
+static uint8_t saved_sat = 0;
+static uint8_t saved_val = 0;
+static uint8_t saved_mode = 0;
+static bool os_detected = false;
 
 // Helper function to set color based on OS
 void set_os_color(os_variant_t os) {
@@ -67,10 +72,43 @@ void set_os_color(os_variant_t os) {
     }
 }
 
+// Callback to restore previous RGB settings after showing OS color
+uint32_t restore_rgb_callback(uint32_t trigger_time, void* cb_arg) {
+    // Restore previous RGB settings (or turn off if they were off)
+    if (saved_mode == 0 || saved_val == 0) {
+        rgblight_disable_noeeprom();
+    } else {
+        rgblight_sethsv_noeeprom(saved_hue, saved_sat, saved_val);
+        rgblight_mode_noeeprom(saved_mode);
+    }
+    return 0; // Don't repeat
+}
+
+// Keyboard initialization - save RGB settings then turn off until OS is detected
+void keyboard_post_init_user(void) {
+    // Read and save RGB settings from EEPROM before turning off
+    saved_hue = rgblight_get_hue();
+    saved_sat = rgblight_get_sat();
+    saved_val = rgblight_get_val();
+    saved_mode = rgblight_get_mode();
+
+    // Turn off RGB until OS detection
+    rgblight_disable_noeeprom();
+}
+
 // OS Detection callback to set RGB lighting based on OS
 bool process_detected_host_os_user(os_variant_t detected_os) {
     current_os = detected_os;
+    os_detected = true;
+
+    // Enable RGB and show OS color with breathing effect
+    rgblight_enable_noeeprom();
     set_os_color(detected_os);
+    rgblight_mode_noeeprom(RGBLIGHT_MODE_BREATHING + 3); // Breathing mode
+
+    // Schedule restoration of previous color after 3 seconds (3000ms)
+    defer_exec(3000, restore_rgb_callback, NULL);
+
     return true;
 }
 
