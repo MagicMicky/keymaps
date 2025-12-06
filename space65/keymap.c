@@ -18,6 +18,10 @@
 #define _BL 0
 #define _FL 1
 
+// Custom keycodes
+enum custom_keycodes {
+    OS_COLOR = QK_USER_0
+};
 
 //LOCK SCREEN key for osx
 #define KC_LOCK LCTL(LSFT(KC_PWR))
@@ -31,17 +35,20 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_LCTL, KC_LALT, KC_LGUI,                   KC_SPC,  KC_SPC,  KC_SPC,           KC_RALT, MO(_FL),                   KC_LEFT, KC_DOWN, KC_RGHT
     ),
     [_FL] = LAYOUT(
-        QK_BOOT, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  _______, _______, KC_LOCK,
-        _______,          UG_TOGG, UG_NEXT, UG_HUEU, UG_HUED, UG_SATU, UG_SATD, UG_VALU, UG_VALD, _______, _______, _______, _______, _______, KC_VOLD,
+        QK_BOOT, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_DEL,  KC_DEL,  KC_LOCK,
+        _______,          UG_TOGG, UG_NEXT, UG_HUEU, UG_HUED, UG_SATU, UG_SATD, UG_VALU, UG_VALD, OS_COLOR, _______, _______, _______, _______, KC_VOLD,
         MO(_FL),          _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          KC_VOLU,
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          KC_PGUP, KC_MUTE,
-        _______, _______, _______,                   _______, _______, _______,          _______, _______,                   _______, KC_PGDN, _______
+        _______, _______, _______,                   _______, _______, _______,          _______, _______,                   KC_HOME, KC_PGDN, KC_END
     ),
 };
 
-// OS Detection callback to set RGB lighting based on OS
-bool process_detected_host_os_user(os_variant_t detected_os) {
-    switch (detected_os) {
+// Store detected OS globally
+static os_variant_t current_os = OS_UNSURE;
+
+// Helper function to set color based on OS
+void set_os_color(os_variant_t os) {
+    switch (os) {
         case OS_MACOS:
         case OS_IOS:
             // Set to pink for macOS/iOS
@@ -54,9 +61,27 @@ bool process_detected_host_os_user(os_variant_t detected_os) {
         case OS_LINUX:
         case OS_UNSURE:
         default:
-            // Set to blue for Linux/default
-            rgblight_sethsv_noeeprom(HSV_BLUE);
+            // Set to white for Linux/default
+            rgblight_sethsv_noeeprom(HSV_WHITE);
             break;
+    }
+}
+
+// OS Detection callback to set RGB lighting based on OS
+bool process_detected_host_os_user(os_variant_t detected_os) {
+    current_os = detected_os;
+    set_os_color(detected_os);
+    return true;
+}
+
+// Handle custom keycodes
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case OS_COLOR:
+            if (record->event.pressed) {
+                set_os_color(current_os);
+            }
+            return false;
     }
     return true;
 }

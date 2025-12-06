@@ -4,7 +4,7 @@ clean:
 	rm -rf output/*
 
 build-latest:
-	docker build -t qmk:latest .
+	docker build --build-arg USER_ID=$(shell id -u) --build-arg GROUP_ID=$(shell id -g) -t qmk:latest .
 
 tada68: clean build-latest
 	docker run  -v $(CURDIR)/output:/output -v $(CURDIR)/tada68:/qmk/keyboards/tada68/keymaps/magicmicky:ro -e keyboard=tada68 -e keymap=magicmicky -e output=bin -ti qmk 
