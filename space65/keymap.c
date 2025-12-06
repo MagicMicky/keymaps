@@ -56,17 +56,17 @@ void set_os_color(os_variant_t os) {
     switch (os) {
         case OS_MACOS:
         case OS_IOS:
-            // Set to pink for macOS/iOS
-            rgblight_sethsv_noeeprom(HSV_PINK);
+        case OS_LINUX:
+            // Set to pink for macOS/iOS/Linux
+            rgblight_sethsv_noeeprom(HSV_PURPLE);
             break;
         case OS_WINDOWS:
             // Set to blue for Windows
-            rgblight_sethsv_noeeprom(HSV_BLUE);
+            rgblight_sethsv_noeeprom(HSV_CYAN);
             break;
-        case OS_LINUX:
         case OS_UNSURE:
         default:
-            // Set to white for Linux/default
+            // Set to white for default
             rgblight_sethsv_noeeprom(HSV_WHITE);
             break;
     }
