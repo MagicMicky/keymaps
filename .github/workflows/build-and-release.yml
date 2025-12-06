@@ -1,0 +1,62 @@
+name: Build and Release Space65 Firmware
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'space65/**'
+      - 'Dockerfile'
+      - 'Makefile'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build firmware
+        run: make space65
+
+      - name: Get commit info
+        id: commit
+        run: |
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "timestamp=$(date +%Y%m%d-%H%M%S)" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: build-${{ steps.commit.outputs.timestamp }}
+          release_name: Space65 Firmware - ${{ steps.commit.outputs.sha_short }}
+          body: |
+            Automated build of Space65 firmware
+
+            **Commit**: ${{ github.sha }}
+            **Author**: ${{ github.actor }}
+            **Message**: ${{ github.event.head_commit.message }}
+
+            Download the `.hex` file below and flash it to your Space65 keyboard.
+          draft: false
+          prerelease: false
+
+      - name: Upload firmware to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./output/gray_studio_space65_magicmicky.hex
+          asset_name: gray_studio_space65_magicmicky.hex
+          asset_content_type: application/octet-stream
